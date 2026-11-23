@@ -1,0 +1,924 @@
+<div class="notebook">
+
+<div class="nb-cell program" name="p4">
+sum(0, 0).
+
+sum(N, S) :-
+    N &gt; 0,
+    N1 is N - 1,
+    sum(N1, S1),
+    S is N + S1.
+</div>
+
+<div class="nb-cell program" name="p3">
+% Database facts
+person('Nandhu', '2007-05-15').
+person('Ravi', '2005-08-20').
+person('Priya', '2006-12-10').
+person('Arun', '2004-03-25').
+
+% Query to display name and DOB
+display(Name, DOB) :-
+    person(Name, DOB).
+</div>
+
+<div class="nb-cell program" name="p1">
+% Database facts
+student_teacher('Nandhu', 'Ravi', 'CSA17').
+student_teacher('Priya', 'Kumar', 'CSE01').
+student_teacher('Arun', 'Suresh', 'CSA18').
+student_teacher('Divya', 'Anitha', 'CSE02').
+
+% Display student details
+display(Student, Teacher, Subject) :-
+    student_teacher(Student, Teacher, Subject).
+</div>
+
+<div class="nb-cell program" name="p2">
+% Planet database
+planet(mercury).
+planet(venus).
+planet(earth).
+planet(mars).
+planet(jupiter).
+planet(saturn).
+planet(uranus).
+planet(neptune).
+
+% Display planets
+display(Planet) :-
+    planet(Planet).
+</div>
+
+<div class="nb-cell program" name="p5">
+% Towers of Hanoi
+
+hanoi(1, Source, Destination, _) :-
+    write('Move disk from '),
+    write(Source),
+    write(' to '),
+    write(Destination),
+    nl.
+
+hanoi(N, Source, Destination, Auxiliary) :-
+    N &gt; 1,
+    N1 is N - 1,
+    hanoi(N1, Source, Auxiliary, Destination),
+    hanoi(1, Source, Destination, Auxiliary),
+    hanoi(N1, Auxiliary, Destination, Source).
+</div>
+
+<div class="nb-cell program" name="p6">
+% Facts
+bird(parrot).
+bird(pigeon).
+bird(eagle).
+bird(ostrich).
+bird(penguin).
+
+% Flying birds
+can_fly(parrot).
+can_fly(pigeon).
+can_fly(eagle).
+
+% Rule
+cannot_fly(Bird) :-
+    bird(Bird),
+    \+ can_fly(Bird).
+</div>
+
+<div class="nb-cell program" name="p7">
+% Facts
+male(ravi).
+male(kumar).
+male(arun).
+
+female(lakshmi).
+female(priya).
+female(divya).
+
+% Parent relationships
+parent(ravi, kumar).
+parent(lakshmi, kumar).
+parent(kumar, arun).
+parent(priya, arun).
+
+% Rules
+father(X, Y) :-
+    male(X),
+    parent(X, Y).
+
+mother(X, Y) :-
+    female(X),
+    parent(X, Y).
+
+grandparent(X, Y) :-
+    parent(X, Z),
+    parent(Z, Y).
+
+sibling(X, Y) :-
+    parent(Z, X),
+    parent(Z, Y),
+    X \= Y.
+</div>
+
+<div class="nb-cell program" name="p8">
+% Disease and Diet Database
+
+diet(diabetes, 'Low sugar food and vegetables').
+diet(obesity, 'Fruits, vegetables and balanced food').
+diet(anemia, 'Iron-rich food like spinach and beans').
+diet(hypertension, 'Low salt food and fresh fruits').
+diet(heart_disease, 'Balanced diet with fruits and vegetables').
+
+% Rule to suggest diet
+
+suggest_diet(Disease, Diet) :-
+    diet(Disease, Diet).
+</div>
+
+<div class="nb-cell program" name="p9">
+% Monkey Banana Problem
+
+% Initial state
+initial_state(at_door, on_floor, at_window, has_not).
+
+% Monkey moves to the box
+move(state(at_door, on_floor, at_window, has_not),
+     state(at_window, on_floor, at_window, has_not),
+     move_monkey).
+
+% Monkey pushes the box
+move(state(at_window, on_floor, at_window, has_not),
+     state(at_middle, on_floor, at_middle, has_not),
+     push_box).
+
+% Monkey climbs the box
+move(state(at_middle, on_floor, at_middle, has_not),
+     state(at_middle, on_box, at_middle, has_not),
+     climb_box).
+
+% Monkey grabs the banana
+move(state(at_middle, on_box, at_middle, has_not),
+     state(at_middle, on_box, at_middle, has),
+     grab_banana).
+
+% Goal state
+goal(state(_, _, _, has)).
+
+% Solution
+solve(State, []) :-
+    goal(State).
+
+solve(State, [Action | Rest]) :-
+    move(State, NextState, Action),
+    solve(NextState, Rest).
+</div>
+
+<div class="nb-cell program" name="p10">
+% Fruit and Color Database
+
+fruit_color(apple, red).
+fruit_color(banana, yellow).
+fruit_color(orange, orange).
+fruit_color(grapes, green).
+fruit_color(mango, yellow).
+fruit_color(strawberry, red).
+
+% Rule to display fruit and color
+
+display(Fruit, Color) :-
+    fruit_color(Fruit, Color).
+</div>
+
+<div class="nb-cell program" name="p11">
+% Graph connections
+edge(a, b).
+edge(a, c).
+edge(b, d).
+edge(b, e).
+edge(c, f).
+edge(c, g).
+
+% Heuristic values
+h(a, 6).
+h(b, 4).
+h(c, 2).
+h(d, 5).
+h(e, 3).
+h(f, 1).
+h(g, 0).
+
+% Best First Search
+best_first(Start, Goal, Path) :-
+    search([[Start]], Goal, RevPath),
+    reverse(RevPath, Path).
+
+search([[Goal|Path]|_], Goal, [Goal|Path]).
+
+search([ [Node|Path] | Rest], Goal, Result) :-
+    findall([Next,Node|Path],
+        (edge(Node, Next),
+         \+ member(Next, [Node|Path])),
+        Children),
+    append(Rest, Children, NewQueue),
+    sort_queue(NewQueue, SortedQueue),
+    search(SortedQueue, Goal, Result).
+
+sort_queue(Queue, Sorted) :-
+    predsort(compare_nodes, Queue, Sorted).
+
+compare_nodes(Order, [A|_], [B|_]) :-
+    h(A, HA),
+    h(B, HB),
+    compare(Order, HA, HB).
+</div>
+
+<div class="nb-cell program" name="p12">
+% Medical Diagnosis System
+
+% Symptoms
+symptom(ram, fever).
+symptom(ram, cough).
+
+symptom(raj, fever).
+symptom(raj, headache).
+
+symptom(anu, sneezing).
+symptom(anu, cough).
+
+% Diagnosis Rules
+disease(Person, flu) :-
+    symptom(Person, fever),
+    symptom(Person, cough).
+
+disease(Person, cold) :-
+    symptom(Person, sneezing),
+    symptom(Person, cough).
+
+disease(Person, viral_fever) :-
+    symptom(Person, fever),
+    symptom(Person, headache).
+</div>
+
+<div class="nb-cell program" name="p13">
+% Facts
+fact(sun).
+fact(water).
+
+% Rules
+rule(plant_grows, [sun, water]).
+rule(food_produced, [plant_grows]).
+
+% Forward Chaining
+forward :-
+    rule(NewFact, Conditions),
+    \+ fact(NewFact),
+    check_all(Conditions),
+    assertz(fact(NewFact)),
+    write('New Fact: '),
+    write(NewFact), nl,
+    fail.
+
+forward.
+
+% Check conditions
+check_all([]).
+</div>
+
+<div class="nb-cell program" name="p14">
+% Facts
+fact(sun).
+fact(water).
+
+% Rules
+rule(plant_grows) :-
+    fact(sun),
+    fact(water).
+
+rule(food_produced) :-
+    rule(plant_grows).
+
+% Backward Chaining
+backward(Goal) :-
+    fact(Goal).
+
+backward(Goal) :-
+    rule(Goal).
+</div>
+
+<div class="nb-cell program" name="p15">
+% HTML Tags Database
+
+html_tag(title, "Defines the title of a webpage").
+html_tag(anchor, "Creates hyperlinks").
+html_tag(heading, "Displays headings").
+html_tag(paragraph, "Displays paragraphs").
+html_tag(image, "Displays images").
+html_tag(bold, "Displays bold text").
+html_tag(italic, "Displays italic text").
+
+% Rule to display tag details
+
+display_tag(Tag, Description) :-
+    html_tag(Tag, Description).
+
+% Rule to display all tags
+
+display_all :-
+    html_tag(Tag, Description),
+    write(Tag),
+    write(' : '),
+    write(Description),
+    nl,
+    fail.
+
+display_all.
+</div>
+
+<div class="nb-cell program" name="p16">
+% Linear Regression in Prolog
+
+% Training data: data(X, Y)
+data(1, 2).
+data(2, 4).
+data(3, 6).
+data(4, 8).
+data(5, 10).
+
+% Calculate prediction using Y = M*X + C
+predict(X, Y) :-
+    M is 2,
+    C is 0,
+    Y is M * X + C.
+</div>
+
+<div class="nb-cell program" name="p17">
+% KNN Classification
+
+% Training data
+point(1, 2, red).
+point(2, 3, red).
+point(3, 3, red).
+point(6, 7, blue).
+point(7, 8, blue).
+point(8, 8, blue).
+
+% Calculate Euclidean distance
+distance(X1, Y1, X2, Y2, D) :-
+    D is sqrt((X1-X2)^2 + (Y1-Y2)^2).
+
+% Find nearest class (simple classification)
+classify(X, Y, Class) :-
+    findall(D-C,
+        (point(A, B, C),
+         distance(X, Y, A, B, D)),
+        List),
+    sort(List, [_-Class|_]).
+</div>
+
+<div class="nb-cell program" name="p18">
+% Image Classification Database
+
+% Image features and labels
+image(1, cat).
+image(2, dog).
+image(3, cat).
+image(4, dog).
+image(5, bird).
+
+% Classification rule
+classify(Image, Class) :-
+    image(Image, Class).
+
+% Display all images
+display :-
+    image(Image, Class),
+    write('Image: '),
+    write(Image),
+    write(' Class: '),
+    write(Class),
+    nl,
+    fail.
+
+display.
+</div>
+
+<div class="nb-cell program" name="p19">
+% Decision Tree for Weather Classification
+
+% Facts
+weather(sunny, hot, no, play).
+weather(sunny, mild, yes, play).
+weather(rainy, cold, yes, stay).
+weather(rainy, mild, no, play).
+weather(cloudy, mild, no, play).
+weather(cloudy, cold, yes, stay).
+
+% Decision Tree Rules
+decision(sunny, _, play).
+
+decision(rainy, _, stay).
+
+decision(cloudy, mild, play).
+
+decision(cloudy, cold, stay).
+
+% Classification
+classify(Weather, Temperature, Wind, Result) :-
+    decision(Weather, Temperature, Result).
+</div>
+
+<div class="nb-cell program" name="p20">
+% Sentiment Analysis using Prolog
+
+% Positive words
+positive(good).
+positive(happy).
+positive(excellent).
+positive(awesome).
+positive(love).
+
+% Negative words
+negative(bad).
+negative(sad).
+negative(worst).
+negative(hate).
+negative(poor).
+
+% Neutral words
+neutral(book).
+neutral(table).
+neutral(pen).
+
+% Sentiment rules
+sentiment(Word, positive) :-
+    positive(Word).
+
+sentiment(Word, negative) :-
+    negative(Word).
+
+sentiment(Word, neutral) :-
+    neutral(Word).
+
+% Display sentiment
+analyze(Word) :-
+    sentiment(Word, Result),
+    write('Sentiment: '),
+    write(Result).
+</div>
+
+<div class="nb-cell program" name="p21">
+% Genetic Algorithm
+
+% Initial Population
+population([1, 3, 5, 7, 9, 10]).
+
+% Fitness Function
+fitness(X, F) :-
+    F is X * X.
+
+% Find Best Individual
+best(X, Y) :-
+    fitness(X, F1),
+    fitness(Y, F2),
+    F1 &gt;= F2.
+
+% Select Best Individual
+select_best(List, Best) :-
+    max_member(Best, List).
+
+% Display Result
+genetic_algorithm :-
+    population(P),
+    select_best(P, Best),
+    fitness(Best, Fitness),
+    write('Best Individual: '), write(Best), nl,
+    write('Maximum Fitness: '), write(Fitness), nl.
+</div>
+
+<div class="nb-cell program" name="p22">
+% Training data: data(X, Y, Class)
+% Class 1 = Positive, Class 0 = Negative
+
+data(1, 1, 0).
+data(2, 1, 0).
+data(3, 2, 0).
+data(6, 5, 1).
+data(7, 6, 1).
+data(8, 5, 1).
+
+% SVM decision boundary: X + Y = 8
+
+classify(X, Y, 1) :-
+    X + Y &gt;= 8.
+
+classify(X, Y, 0) :-
+    X + Y &lt; 8.
+
+% Display training data
+display_data :-
+    data(X, Y, C),
+    write('X = '), write(X),
+    write(', Y = '), write(Y),
+    write(', Class = '), writeln(C),
+    fail.
+
+display_data.
+</div>
+
+<div class="nb-cell program" name="p23">
+% Dataset with two features: X and Y
+
+data(2, 3).
+data(3, 4).
+data(4, 5).
+data(5, 6).
+data(6, 7).
+
+% Calculate the mean of X and Y
+mean_x(MX) :-
+    findall(X, data(X, _), List),
+    sum_list(List, Sum),
+    length(List, N),
+    MX is Sum / N.
+
+mean_y(MY) :-
+    findall(Y, data(_, Y), List),
+    sum_list(List, Sum),
+    length(List, N),
+    MY is Sum / N.
+
+% Center the data
+centered(XC, YC) :-
+    data(X, Y),
+    mean_x(MX),
+    mean_y(MY),
+    XC is X - MX,
+    YC is Y - MY.
+
+% Display centered data
+display_centered :-
+    centered(X, Y),
+    write('('), write(X), write(', '),
+    write(Y), writeln(')'),
+    fail.
+
+display_centered.
+
+% Simplified first principal component projection
+pca_projection(PC) :-
+    centered(X, Y),
+    PC is (X + Y) / sqrt(2).
+</div>
+
+<div class="nb-cell program" name="p24">
+% User ratings: rating(User, Item, Rating)
+
+rating(user1, movie1, 5).
+rating(user1, movie2, 4).
+rating(user1, movie3, 1).
+
+rating(user2, movie1, 5).
+rating(user2, movie2, 4).
+rating(user2, movie3, 2).
+
+rating(user3, movie1, 1).
+rating(user3, movie2, 2).
+rating(user3, movie3, 5).
+rating(user3, movie4, 4).
+
+% Find users who have similar ratings for a common item
+similar_users(U1, U2) :-
+    rating(U1, Item, R1),
+    rating(U2, Item, R2),
+    U1 \= U2,
+    abs(R1 - R2) =&lt; 1.
+
+% Recommend items liked by similar users
+recommend(User, Item) :-
+    similar_users(User, OtherUser),
+    rating(OtherUser, Item, Rating),
+    Rating &gt;= 4,
+    \+ rating(User, Item, _).
+</div>
+
+<div class="nb-cell program" name="p25">
+% Chatbot responses
+
+response([hello], 'Hello! How can I help you?').
+response([hi], 'Hi! Nice to meet you!').
+response([how, are, you], 'I am fine. Thank you!').
+response([what, is, your, name], 'I am a simple Prolog chatbot.').
+response([what, is, ai], 'AI stands for Artificial Intelligence.').
+response([bye], 'Goodbye! Have a nice day!').
+response(_, 'Sorry, I do not understand your message.').
+
+% Process user input
+chat :-
+    write('Enter your message: '),
+    read(Input),
+    response(Input, Reply),
+    write('Chatbot: '),
+    writeln(Reply).
+</div>
+
+<div class="nb-cell program" name="p26">
+% Data points
+point(1, 2).
+point(2, 3).
+point(3, 2).
+point(8, 8).
+point(9, 9).
+point(8, 9).
+
+% Initial cluster centers
+centroid(1, 2, 2).
+centroid(2, 8, 8).
+
+% Calculate Euclidean distance
+distance(X1, Y1, X2, Y2, D) :-
+    D is sqrt((X1-X2)*(X1-X2) +
+              (Y1-Y2)*(Y1-Y2)).
+
+% Find the nearest cluster
+assign_cluster(X, Y, Cluster) :-
+    centroid(1, X1, Y1),
+    centroid(2, X2, Y2),
+    distance(X, Y, X1, Y1, D1),
+    distance(X, Y, X2, Y2, D2),
+    (D1 =&lt; D2 -&gt; Cluster = 1 ; Cluster = 2).
+
+% Display clustered data points
+show_clusters :-
+    point(X, Y),
+    assign_cluster(X, Y, C),
+    write('Point ('), write(X), write(','),
+    write(Y), write(') belongs to Cluster '),
+    writeln(C),
+    fail.
+
+show_clusters.
+</div>
+
+<div class="nb-cell program" name="p27">
+% Environment: A simple path from position 1 to position 5
+
+goal(5).
+
+% Possible actions
+move(1, right, 2).
+move(2, right, 3).
+move(3, right, 4).
+move(4, right, 5).
+
+% Rewards
+reward(5, 10).
+reward(_, -1).
+
+% Agent learns by moving towards the goal
+learn(Position, Path, TotalReward) :-
+    goal(Position),
+    Path = [Position],
+    TotalReward = 10.
+
+learn(Position, [Position|Rest], TotalReward) :-
+    move(Position, right, Next),
+    learn(Next, Rest, NextReward),
+    reward(Position, R),
+    TotalReward is R + NextReward.
+
+% Start training
+train :-
+    learn(1, Path, Reward),
+    write('Learned Path: '),
+    writeln(Path),
+    write('Total Reward: '),
+    writeln(Reward).
+</div>
+
+<div class="nb-cell program" name="p28">
+% Image represented as a matrix of pixel intensity values
+% 0 = Black, 255 = White
+
+image([
+    [10, 20, 200, 210],
+    [15, 25, 205, 215],
+    [30, 40, 220, 230],
+    [35, 45, 225, 235]
+]).
+
+% Threshold-based segmentation
+% Pixel intensity &gt;= 128 is foreground (1)
+% Pixel intensity &lt; 128 is background (0)
+
+segment_pixel(Pixel, 1) :-
+    Pixel &gt;= 128.
+
+segment_pixel(Pixel, 0) :-
+    Pixel &lt; 128.
+
+% Segment each row
+segment_row([], []).
+
+segment_row([Pixel|Rest], [Segment|Result]) :-
+    segment_pixel(Pixel, Segment),
+    segment_row(Rest, Result).
+
+% Segment the complete image
+segment_image([], []).
+
+segment_image([Row|Rest], [SegmentedRow|Result]) :-
+    segment_row(Row, SegmentedRow),
+    segment_image(Rest, Result).
+
+% Display segmented image
+display_segmentation :-
+    image(Image),
+    segment_image(Image, Result),
+    write('Segmented Image:'), nl,
+    writeln(Result).
+</div>
+
+<div class="nb-cell program" name="p29">
+% Pre-trained model output represented as facts
+% object(Image, Object, Confidence)
+
+object(image1, person, 0.98).
+object(image1, car, 0.95).
+object(image1, bicycle, 0.89).
+object(image1, dog, 0.92).
+
+% Detect objects in an image
+detect_objects(Image) :-
+    object(Image, Object, Confidence),
+    write('Detected Object: '),
+    write(Object),
+    write(', Confidence: '),
+    write(Confidence),
+    nl,
+    fail.
+
+detect_objects(_).
+
+% Check whether a particular object is detected
+check_object(Image, Object) :-
+    object(Image, Object, Confidence),
+    write('Object Found: '),
+    write(Object),
+    write(', Confidence: '),
+    writeln(Confidence).
+</div>
+
+<div class="nb-cell program" name="p30">
+% Sample model accuracy for different learning rates
+
+model_accuracy(0.01, 75).
+model_accuracy(0.05, 85).
+model_accuracy(0.10, 92).
+model_accuracy(0.15, 88).
+model_accuracy(0.20, 80).
+
+% Find the best hyperparameter
+best_parameter(Parameter, Accuracy) :-
+    model_accuracy(Parameter, Accuracy),
+    \+ (model_accuracy(_, OtherAccuracy),
+        OtherAccuracy &gt; Accuracy).
+
+% Display all parameter results
+display_results :-
+    model_accuracy(Parameter, Accuracy),
+    write('Learning Rate: '),
+    write(Parameter),
+    write(', Accuracy: '),
+    write(Accuracy),
+    writeln('%'),
+    fail.
+
+display_results.
+</div>
+
+<div class="nb-cell program" name="p31">
+% Bayesian Network:
+% Cloudy -&gt; Rain
+% Cloudy -&gt; Sprinkler
+% Rain and Sprinkler -&gt; Wet Grass
+
+% Prior probability
+probability(cloudy, true, 0.5).
+probability(cloudy, false, 0.5).
+
+% Conditional probability of Rain
+probability(rain, true, cloudy, 0.8).
+probability(rain, false, cloudy, 0.2).
+
+probability(rain, true, not_cloudy, 0.2).
+probability(rain, false, not_cloudy, 0.8).
+
+% Conditional probability of Sprinkler
+probability(sprinkler, true, cloudy, 0.1).
+probability(sprinkler, false, cloudy, 0.9).
+
+probability(sprinkler, true, not_cloudy, 0.5).
+probability(sprinkler, false, not_cloudy, 0.5).
+
+% Conditional probability of Wet Grass
+probability(wet_grass, true, true, true, 0.99).
+probability(wet_grass, true, true, false, 0.90).
+probability(wet_grass, true, false, true, 0.90).
+probability(wet_grass, true, false, false, 0.01).
+
+% Query probability of cloudy weather
+query_cloudy(P) :-
+    probability(cloudy, true, P).
+
+% Query probability of rain given cloudy weather
+query_rain(P) :-
+    probability(rain, true, cloudy, P).
+
+% Query probability of wet grass
+query_wet_grass(Rain, Sprinkler, P) :-
+    probability(wet_grass, true, Rain, Sprinkler, P).
+</div>
+
+<div class="nb-cell program" name="p32">
+% Sample face recognition database
+% face(Person, Face_ID, Confidence)
+
+face(person1, face101, 0.98).
+face(person2, face102, 0.95).
+face(person3, face103, 0.92).
+
+% Recognize a face using its ID
+recognize_face(FaceID, Person, Confidence) :-
+    face(Person, FaceID, Confidence).
+
+% Display all stored faces
+display_faces :-
+    face(Person, FaceID, Confidence),
+    write('Person: '),
+    write(Person),
+    write(', Face ID: '),
+    write(FaceID),
+    write(', Confidence: '),
+    writeln(Confidence),
+    fail.
+
+display_faces.
+
+% Check whether a face is recognized
+check_face(FaceID) :-
+    recognize_face(FaceID, Person, Confidence),
+    write('Recognized: '),
+    write(Person),
+    write(', Confidence: '),
+    writeln(Confidence).
+</div>
+
+<div class="nb-cell program" name="p33">
+% Initial population of neural network weights
+% Each network has two weights: W1 and W2
+
+network(net1, 1, 1).
+network(net2, 2, 1).
+network(net3, 1, 2).
+network(net4, 3, 2).
+
+% XOR training examples
+xor(0, 0, 0).
+xor(0, 1, 1).
+xor(1, 0, 1).
+xor(1, 1, 0).
+
+% Neural network output (simplified model)
+predict(X, Y, W1, W2, Output) :-
+    Sum is X * W1 + Y * W2,
+    (Sum &gt;= 2 -&gt; Output = 1 ; Output = 0).
+
+% Calculate fitness
+fitness(W1, W2, Fitness) :-
+    findall(1,
+        (xor(X, Y, Expected),
+         predict(X, Y, W1, W2, Actual),
+         Actual =:= Expected),
+        Results),
+    length(Results, Fitness).
+
+% Find the best network
+best_network(Name, W1, W2, Fitness) :-
+    network(Name, W1, W2),
+    fitness(W1, W2, Fitness),
+    \+ (network(_, A, B),
+        fitness(A, B, F),
+        F &gt; Fitness).
+
+% Display the best network
+evolve :-
+    best_network(Name, W1, W2, Fitness),
+    write('Best Network: '), writeln(Name),
+    write('Weight 1: '), writeln(W1),
+    write('Weight 2: '), writeln(W2),
+    write('Fitness: '), writeln(Fitness).
+</div>
+
+</div>
